@@ -81,108 +81,251 @@ ID    [a-z][a-z0-9]*
 		return tokenKind;
 		}
 
-"*" 	{
+"--" 	{
+		int tokenKind = TokenKind::DASHDASH;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
 
+		return tokenKind;
+
+		}
+
+"*" 	{
+		int tokenKind = TokenKind::STAR;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 		}	
 
 "/" 	{
+		int tokenKind = TokenKind::SLASH;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "@" 	{
+		int tokenKind = TokenKind::AT;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "^" 	{
+		int tokenKind = TokenKind::CARAT;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "[" 	{
+		int tokenKind = TokenKind::LBRACE;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "]" 	{
+		int tokenKind = TokenKind::STRBRACEAR;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
-"{" 	{
+"{"   	{
+		int tokenKind = TokenKind::LCURLY;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
 
+		return tokenKind
 		}
 
 "}" 	{
+		int tokenKind = TokenKind::RCURLY;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "(" 	{
+		int tokenKind = TokenKind::LPAREN;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 ")" 	{
+		int tokenKind = TokenKind::RPAREN;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 ";" 	{
+		int tokenKind = TokenKind::SEMICOLON;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "," 	{
+		int tokenKind = TokenKind::COMMA;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
 
-		}
-
-"--" 	{
-
-		}
-
-"-" 	{
+		return tokenKind;
 
 		}
 
 "++" 	{
 
+		int tokenKind = TokenKind::CROSSCROSS;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 		}
 
 "!" 	{
+		int tokenKind = TokenKind::NOT;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "==" 	{
+		int tokenKind = TokenKind::EQUALS;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "!=" 	{
+		int tokenKind = TokenKind::NOTEQUALS;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 ">" 	{
+		int tokenKind = TokenKind::GREATER;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "<" 	{
+		int tokenKind = TokenKind::LESS;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "&" 	{
+		int tokenKind = TokenKind::AND;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "<=" 	{
+		int tokenKind = TokenKind::LESSEQ;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 ">=" 	{
+		int tokenKind = TokenKind::GREATEREQ;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "=" 	{
+		int tokenKind = TokenKind::ASSIGN;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "&&" 	{
+		int tokenKind = TokenKind::STAR;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return tokenKind;
 
 		}
 
 "||" 	{
+		int tokenKind = TokenKind::OR;
+		Token * token = new Token(lineNum, colNum, tokenKind);
+		this->yylval->tokenValue = token;
+		colNum += 2;
 
+		return tokenKind;
 		}
 
 ////////////////////////////////////////////////////////////////////
@@ -241,23 +384,26 @@ ID    [a-z][a-z0-9]*
 
 		}
 
-{DIGIT}+	{
-		//TODO: The following computation of the integer
-		// value does not check for overflow. It should do so.
-		int intVal = atoi(yytext);
+{DIGIT}+	
+		{
+			//TODO: The following computation of the integer
+			// value does not check for overflow. It should do so.
+			int intVal = atoi(yytext);
 
 
-		//Note that the IntLitToken does not take a TokenKind argument
-		// since it's implicitly known that the token represents an
-		// INTLITERAL		
-		yylval->tokenValue = new IntLitToken(lineNum, colNum, intVal);
+			//Note that the IntLitToken does not take a TokenKind argument
+			// since it's implicitly known that the token represents an
+			// INTLITERAL		
+			yylval->tokenValue = new IntLitToken(lineNum, colNum, intVal);
 
-		//TODO: update the colNum count according to the number of
-		// characters consumed. 
+			//TODO: update the colNum count according to the number of
+			// characters consumed. 
 
-		//As before, alert the client program that an INTLITERAL 
-		// token was matched
-		return TokenKind::INTLITERAL;
+			colNum += s = to_string(intVal).length();
+
+			//As before, alert the client program that an INTLITERAL 
+			// token was matched
+			return TokenKind::INTLITERAL;
 		}
 
 ////////////////////////////////////////////////////////////////////
