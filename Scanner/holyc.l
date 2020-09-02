@@ -88,7 +88,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "*" 	{
@@ -107,7 +106,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "@" 	{
@@ -117,7 +115,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "^" 	{
@@ -127,7 +124,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "[" 	{
@@ -137,7 +133,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "]" 	{
@@ -147,7 +142,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "{"   	{
@@ -166,7 +160,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "(" 	{
@@ -176,7 +169,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 ")" 	{
@@ -186,7 +178,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 ";" 	{
@@ -196,7 +187,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "," 	{
@@ -206,7 +196,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "++" 	{
@@ -226,7 +215,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "==" 	{
@@ -236,7 +224,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "!=" 	{
@@ -246,7 +233,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 ">" 	{
@@ -256,7 +242,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "<" 	{
@@ -266,7 +251,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "&" 	{
@@ -276,7 +260,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "<=" 	{
@@ -286,7 +269,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 ">=" 	{
@@ -296,7 +278,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "=" 	{
@@ -306,7 +287,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "&&" 	{
@@ -316,7 +296,6 @@ ID    [a-z][a-z0-9]*
 		colNum++;
 
 		return tokenKind;
-
 		}
 
 "||" 	{
@@ -342,12 +321,10 @@ ID    [a-z][a-z0-9]*
 
 "\'" 	{
 		//Single quote
-
 		}
 
 "\"" 	{
 		//Double quote
-
 		}
 
 "\\"	{
