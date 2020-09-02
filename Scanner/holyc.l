@@ -85,7 +85,7 @@ ID    [a-z][a-z0-9]*
 		int tokenKind = TokenKind::DASHDASH;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
-		colNum++;
+		colNum += 2;
 
 		return tokenKind;
 		}
@@ -203,7 +203,7 @@ ID    [a-z][a-z0-9]*
 		int tokenKind = TokenKind::CROSSCROSS;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
-		colNum++;
+		colNum += 2;
 
 		return tokenKind;
 		}
@@ -221,7 +221,7 @@ ID    [a-z][a-z0-9]*
 		int tokenKind = TokenKind::EQUALS;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
-		colNum++;
+		colNum += 2;
 
 		return tokenKind;
 		}
@@ -230,7 +230,7 @@ ID    [a-z][a-z0-9]*
 		int tokenKind = TokenKind::NOTEQUALS;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
-		colNum++;
+		colNum += 2;
 
 		return tokenKind;
 		}
@@ -266,7 +266,7 @@ ID    [a-z][a-z0-9]*
 		int tokenKind = TokenKind::LESSEQ;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
-		colNum++;
+		colNum += 2;
 
 		return tokenKind;
 		}
@@ -275,7 +275,7 @@ ID    [a-z][a-z0-9]*
 		int tokenKind = TokenKind::GREATEREQ;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
-		colNum++;
+		colNum += 2;
 
 		return tokenKind;
 		}
@@ -293,7 +293,7 @@ ID    [a-z][a-z0-9]*
 		int tokenKind = TokenKind::STAR;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
-		colNum++;
+		colNum += 2;
 
 		return tokenKind;
 		}
@@ -317,6 +317,7 @@ ID    [a-z][a-z0-9]*
 		}
 
 "\t"	{
+		colNum += 5;
 		}
 
 "\'" 	{
@@ -328,37 +329,59 @@ ID    [a-z][a-z0-9]*
 		}
 
 "\\"	{
+			int tokenKind = TokenKind::SLASH;
+			int tokenKind = TokenKind::STRLITERAL;
+			
+			Token * token  = new StringLitToken(lineNum, colNum, yylval);
+			this->yylval->tokenValue = token;
+			colNum++;
+
+			return tokenKind;
 		}
 
 
 ////////////////////////////////////////////////////////////////////
 //Char Literals
 ////////////////////////////////////////////////////////////////////
-"'\a"	{
+"'a"	{
 		}
 
 "'\t"	{
+		colNum += 5;
 		}
 
 "'\\"	{
+
 		}
 
 "'\n"	{
+		lineNum++;
+		colNum = 0;
 		}
 
 "'\ "	{
+		// space
+		colNum++;
 		}
 
-"'\	"	{
+"'\     "
+		{
+		// Tab
+		colNum += 5;
 		}
 
 
 ////////////////////////////////////////////////////////////////////
 //Identifier
-////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////
 
 {ID}	{
+			int tokenKind = TokenKind::ID;
+			Token * token  = new IDToken(lineNum, colNum, yylval);
+			this->yylval->tokenValue = token;
+			colNum += yylval.length();
 
+			return tokenKind;
 		}
 
 {DIGIT}+	
