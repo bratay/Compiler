@@ -310,33 +310,48 @@ ID    [a-z][a-z0-9]*
 ////////////////////////////////////////////////////////////////////
 //String Literals
 ////////////////////////////////////////////////////////////////////
-\n		{
+"\n"		{
 		//Update the line number, reset the columnNumber
+		Token * token  = new StrToken(lineNum, colNum, yylval);
+		this->yylval->tokenValue = token;
 		lineNum++;
 		colNum = 0;
+
+		return TokenKind::STRLITERAL;
 		}
 
 "\t"	{
+		Token * token  = new StrToken(lineNum, colNum, yylval);
+		this->yylval->tokenValue = token;
 		colNum += 5;
+
+		return TokenKind::STRLITERAL;
 		}
 
 "\'" 	{
 		//Single quote
+		Token * token  = new StrToken(lineNum, colNum, yylval);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return TokenKind::STRLITERAL;
 		}
 
 "\"" 	{
 		//Double quote
+		Token * token  = new StrToken(lineNum, colNum, yylval);
+		this->yylval->tokenValue = token;
+		colNum++;
+
+		return TokenKind::STRLITERAL;
 		}
 
 "\\"	{
-			int tokenKind = TokenKind::SLASH;
-			int tokenKind = TokenKind::STRLITERAL;
-			
-			Token * token  = new StringLitToken(lineNum, colNum, yylval);
+			Token * token  = new StrToken(lineNum, colNum, yylval);
 			this->yylval->tokenValue = token;
 			colNum++;
 
-			return tokenKind;
+			return TokenKind::STRLITERAL;
 		}
 
 
@@ -344,35 +359,51 @@ ID    [a-z][a-z0-9]*
 //Char Literals
 ////////////////////////////////////////////////////////////////////
 "'a"	{
+		Token * token  = new Token(lineNum, colNum, yylval);
+		this->yylval->tokenValue = token;
+
+		//What does `a do?
+		colNum++;
+
+		return TokenKind::CHARLIT;	
 		}
 
-"'\t"	{
-		colNum += 5;
+"'\t" |	"'\		" 
+		{
+		Token * token  = new Token(lineNum, colNum, yylval);
+		this->yylval->tokenValue = token;
+		colNum += 4;
+
+		return TokenKind::CHARLIT;	
 		}
 
 "'\\"	{
+		Token * token  = new Token(lineNum, colNum, yylval);
+		this->yylval->tokenValue = token;
+		colNum++;
 
+		return TokenKind::CHARLIT;	
 		}
 
 "'\n"	{
-		lineNum++;
+		Token * token  = new Token(lineNum, colNum, yylval);
+		this->yylval->tokenValue = token;
+		lineNu++;
 		colNum = 0;
+
+		return TokenKind::CHARLIT;
 		}
 
 "'\ "	{
-		// space
+		Token * token  = new Token(lineNum, colNum, yylval);
+		this->yylval->tokenValue = token;
 		colNum++;
-		}
 
-"'\     "
-		{
-		// Tab
-		colNum += 5;
+		return TokenKind::CHARLIT;
 		}
-
 
 ////////////////////////////////////////////////////////////////////
-//Identifier
+// Identifier
 ////////////////////////////////////////////////////////////////////
 
 {ID}	{
