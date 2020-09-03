@@ -68,10 +68,6 @@ ID    [a-z][a-z0-9]*
 		return tokenKind;
 		}
 
-////////////////////////////////////////////////////////////////////
-//Symbol Operators
-////////////////////////////////////////////////////////////////////
-
 "-" 	{
 		//Essentially the same thing as CROSS, but without the verbose
 		// comments so it doesn't look so scary.
@@ -136,7 +132,7 @@ ID    [a-z][a-z0-9]*
 		}
 
 "]" 	{
-		int tokenKind = TokenKind::STRBRACEAR;
+		int tokenKind = TokenKind::RBRACE;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
 		colNum++;
@@ -150,7 +146,7 @@ ID    [a-z][a-z0-9]*
 		this->yylval->tokenValue = token;
 		colNum++;
 
-		return tokenKind
+		return tokenKind;
 		}
 
 "}" 	{
@@ -307,116 +303,138 @@ ID    [a-z][a-z0-9]*
 		return tokenKind;
 		}
 
-////////////////////////////////////////////////////////////////////
-//String Literals
-////////////////////////////////////////////////////////////////////
-"\n"		{
+
+
+
+
+
+
+
+
+\\ {
+	colNum++;
+	}
+
+\n	{
 		//Update the line number, reset the columnNumber
-		Token * token  = new StrToken(lineNum, colNum, yylval);
-		this->yylval->tokenValue = token;
+		//Token * token  = new StrToken(lineNum, colNum, yytext);
+		//this->yylval->tokenValue = token;
 		lineNum++;
 		colNum = 0;
 
 		return TokenKind::STRLITERAL;
 		}
 
-"\t"	{
-		Token * token  = new StrToken(lineNum, colNum, yylval);
-		this->yylval->tokenValue = token;
+\t	{
+		// Token * token  = new StrToken(lineNum, colNum, yytext);
+		// this->yylval->tokenValue = token;
 		colNum += 5;
 
 		return TokenKind::STRLITERAL;
 		}
 
-"\'" 	{
+\' 	{
 		//Single quote
-		Token * token  = new StrToken(lineNum, colNum, yylval);
-		this->yylval->tokenValue = token;
+		// Token * token  = new StrToken(lineNum, colNum, yytext);
+		// this->yylval->tokenValue = token;
 		colNum++;
 
 		return TokenKind::STRLITERAL;
 		}
 
-"\"" 	{
+\" 	{
 		//Double quote
-		Token * token  = new StrToken(lineNum, colNum, yylval);
-		this->yylval->tokenValue = token;
+		// this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
 		colNum++;
 
 		return TokenKind::STRLITERAL;
 		}
 
-"\\"	{
-			Token * token  = new StrToken(lineNum, colNum, yylval);
-			this->yylval->tokenValue = token;
+\\	{
+			// Token * token  = new StrToken(lineNum, colNum, yytext);
+			// this->yylval->tokenValue = token;
 			colNum++;
 
 			return TokenKind::STRLITERAL;
 		}
 
 
-////////////////////////////////////////////////////////////////////
-//Char Literals
-////////////////////////////////////////////////////////////////////
-"'a"	{
-		Token * token  = new Token(lineNum, colNum, yylval);
-		this->yylval->tokenValue = token;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"'a"	{
 		//What does `a do?
 		colNum++;
 
 		return TokenKind::CHARLIT;	
 		}
 
-"'\t" |	"'\		" 
-		{
-		Token * token  = new Token(lineNum, colNum, yylval);
-		this->yylval->tokenValue = token;
+'\t  {
 		colNum += 4;
 
 		return TokenKind::CHARLIT;	
 		}
 
-"'\\"	{
-		Token * token  = new Token(lineNum, colNum, yylval);
-		this->yylval->tokenValue = token;
+'\"	{
 		colNum++;
 
 		return TokenKind::CHARLIT;	
 		}
 
-"'\n"	{
-		Token * token  = new Token(lineNum, colNum, yylval);
-		this->yylval->tokenValue = token;
-		lineNu++;
+'\n	{
+		lineNum++;
 		colNum = 0;
 
 		return TokenKind::CHARLIT;
 		}
 
-"'\ "	{
-		Token * token  = new Token(lineNum, colNum, yylval);
-		this->yylval->tokenValue = token;
+'\ 	{
+		// Tab
 		colNum++;
 
 		return TokenKind::CHARLIT;
 		}
 
-////////////////////////////////////////////////////////////////////
-// Identifier
-////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 {ID}	{
 			int tokenKind = TokenKind::ID;
-			Token * token  = new IDToken(lineNum, colNum, yylval);
+			Token * token  = new IDToken(lineNum, colNum, yytext);
 			this->yylval->tokenValue = token;
-			colNum += yylval.length();
+			colNum += strlen(yytext);
 
 			return tokenKind;
 		}
 
-{DIGIT}+	
-		{
+{DIGIT}+	{
 			//TODO: The following computation of the integer
 			// value does not check for overflow. It should do so.
 			int intVal = atoi(yytext);
@@ -430,16 +448,32 @@ ID    [a-z][a-z0-9]*
 			//TODO: update the colNum count according to the number of
 			// characters consumed. 
 
-			colNum += s = to_string(intVal).length();
+			colNum += strlen(yytext);
 
 			//As before, alert the client program that an INTLITERAL 
 			// token was matched
 			return TokenKind::INTLITERAL;
 		}
 
-////////////////////////////////////////////////////////////////////
-//Illegal character
-////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .   {
 		//TODO: Add the rest of the rules above this point so that legal characters
 		// are properly accounted for. 
