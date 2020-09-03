@@ -1,4 +1,3 @@
-%option c++
 %{
 #include <string>
 #include <limits.h>
@@ -250,7 +249,7 @@ ID    [a-z][a-z0-9]*
 		}
 
 "&" 	{
-		int tokenKind = TokenKind::AND;
+		int tokenKind = TokenKind::AMP;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
 		colNum++;
@@ -286,7 +285,7 @@ ID    [a-z][a-z0-9]*
 		}
 
 "&&" 	{
-		int tokenKind = TokenKind::STAR;
+		int tokenKind = TokenKind::AND;
 		Token * token = new Token(lineNum, colNum, tokenKind);
 		this->yylval->tokenValue = token;
 		colNum += 2;
@@ -322,7 +321,7 @@ ID    [a-z][a-z0-9]*
 		lineNum++;
 		colNum = 0;
 
-		return TokenKind::STRLITERAL;
+		// return TokenKind::STRLITERAL;
 		}
 
 \t	{
@@ -330,7 +329,7 @@ ID    [a-z][a-z0-9]*
 		// this->yylval->tokenValue = token;
 		colNum += 5;
 
-		return TokenKind::STRLITERAL;
+		// return TokenKind::STRLITERAL;
 		}
 
 \' 	{
@@ -339,7 +338,7 @@ ID    [a-z][a-z0-9]*
 		// this->yylval->tokenValue = token;
 		colNum++;
 
-		return TokenKind::STRLITERAL;
+		// return TokenKind::STRLITERAL;
 		}
 
 \" 	{
@@ -347,15 +346,11 @@ ID    [a-z][a-z0-9]*
 		// this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
 		colNum++;
 
-		return TokenKind::STRLITERAL;
+		// return TokenKind::STRLITERAL;
 		}
 
 \\	{
-			// Token * token  = new StrToken(lineNum, colNum, yytext);
-			// this->yylval->tokenValue = token;
 			colNum++;
-
-			return TokenKind::STRLITERAL;
 		}
 
 
@@ -373,7 +368,9 @@ ID    [a-z][a-z0-9]*
 
 
 
-
+" " {
+	colNum++;
+	}
 
 
 "'a"	{
@@ -438,7 +435,6 @@ ID    [a-z][a-z0-9]*
 			//TODO: The following computation of the integer
 			// value does not check for overflow. It should do so.
 			int intVal = atoi(yytext);
-
 
 			//Note that the IntLitToken does not take a TokenKind argument
 			// since it's implicitly known that the token represents an
