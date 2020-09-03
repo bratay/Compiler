@@ -399,7 +399,7 @@ ID    [a-z][a-z0-9]*
 		return TokenKind::CHARLIT;
 		}
 
-'\ 	{
+'\  {
 		// Tab
 		colNum++;
 
@@ -436,6 +436,11 @@ ID    [a-z][a-z0-9]*
 			// value does not check for overflow. It should do so.
 			int intVal = atoi(yytext);
 
+			if( intVal > INT_MAX ){
+				std::string msg = "Integer overflow";
+				error(lineNum, colNum, msg);
+			}
+
 			//Note that the IntLitToken does not take a TokenKind argument
 			// since it's implicitly known that the token represents an
 			// INTLITERAL		
@@ -451,6 +456,121 @@ ID    [a-z][a-z0-9]*
 			return TokenKind::INTLITERAL;
 		}
 
+["][\n|\t|\'|\"|\\|	|a-zA-Z0-9|!|@|#|$|%|^|&|*]*["] {
+	int tokenKind = TokenKind::STRLITERAL;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+
+
+
+
+
+"int" {
+	int tokenKind = TokenKind::INT;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+"intptr" {
+	int tokenKind = TokenKind::INTPTR;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"bool" {
+	int tokenKind = TokenKind::BOOL;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"char" {
+	int tokenKind = TokenKind::CHAR;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"charptr" {
+	int tokenKind = TokenKind::CHARPTR;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"void" {
+	int tokenKind = TokenKind::VOID;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"if" {
+	int tokenKind = TokenKind::IF;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"else" {
+	int tokenKind = TokenKind::ELSE;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"while" {
+	int tokenKind = TokenKind::WHILE;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"return" {
+	int tokenKind = TokenKind::RETURN;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"true" {
+	int tokenKind = TokenKind::TRUE;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"false" {
+	int tokenKind = TokenKind::FALSE;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"FROMCONSOLE" {
+	int tokenKind = TokenKind::FROMCONSOLE;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"TOCONSOLE" {
+	int tokenKind = TokenKind::TOCONSOLE;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
+
+"NULLPTR" {
+	int tokenKind = TokenKind::NULLPTR;
+	this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+	colNum += strlen(yytext);
+	return tokenKind;
+}
 
 
 
@@ -458,21 +578,43 @@ ID    [a-z][a-z0-9]*
 
 
 
+` {
+    std::string msg = "Illegal Character";
+    // Report::fatal(lineNum, colNum, msg);
+    error(lineNum, colNum, msg);
+    colNum += yyleng;
+}
+
+'"\\ " {
+    std::string msg = "Empty char literal escape sequence";
+    error(lineNum, colNum, msg);
+    colNum += yyleng;
+}
+
+'"\\ " {
+    std::string msg = "Bad escape sequence";
+    error(lineNum, colNum, msg);
+    colNum += yyleng;
+}
+
+["][\n|\t|\'|\"|\\| |a-zA-Z0-9|!|@|#|$|%|^|&|*]* {
+	std::string msg = "Unterminated string literals";
+    error(lineNum, colNum, msg);
+    colNum += yyleng;
+}
 
 
 
+["] {
+    std::string msg = "Unterminated string literals";
+    error(lineNum, colNum, msg);
+    colNum += yyleng;
+}
 
-
-
-
-
-
-
-
-
-.   {
+.  {
 		//TODO: Add the rest of the rules above this point so that legal characters
-		// are properly accounted for. 
+		// are properly accounted for.
+		// Illegal character	
 		std::string msg = "Illegal character ";
 		msg += yytext;
 		error(lineNum,colNum,msg);
