@@ -21,6 +21,9 @@ std::string BasicType::getString() const{
 	case BaseType::CHAR:
 		res += "char";
 		break;
+	case BaseType::STR:
+		res += "str";
+		break;
 	}
 	return res;
 }

@@ -1,0 +1,4 @@
+int fn(){
+    int p;
+    TOCONSOLE p + 1;
+}

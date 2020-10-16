@@ -108,6 +108,9 @@ namespace holeyc
 		const DataType *tgtType = ta->nodeType(myDst);
 		const DataType *srcType = ta->nodeType(mySrc);
 
+		ta->nodeType(this, tgtType);
+		return;
+
 		//While incomplete, this gives you one case for
 		// assignment: if the types are exactly the same
 		// it is usually ok to do the assignment. One
@@ -167,6 +170,16 @@ namespace holeyc
 		ta->nodeType(this, BasicType::produce(INT));
 	}
 
+	void CharLitNode::typeAnalysis(TypeAnalysis *ta)
+	{
+		ta->nodeType(this, BasicType::produce(CHAR));
+	}
+
+	void StrLitNode::typeAnalysis(TypeAnalysis *ta)
+	{
+		ta->nodeType(this, BasicType::produce(STR));
+	}
+
 	void NotNode::typeAnalysis(TypeAnalysis *ta)
 	{
 		myExp->typeAnalysis(ta);
@@ -181,6 +194,29 @@ namespace holeyc
 		ta->nodeType(this, ErrorType::produce());
 
 		ta->badMathOpd(this->line(), this->col());
+	}
+
+	void ReturnStmtNode::typeAnalysis(TypeAnalysis *ta)
+	{
+		myExp->typeAnalysis(ta);
+		// DataType * node = ta->nodeType(myExp);
+	}
+
+	void ToConsoleStmtNode::typeAnalysis(TypeAnalysis *ta)
+	{
+		mySrc->typeAnalysis(ta);
+		const DataType *l = ta->nodeType(mySrc);
+
+		if (!l->validVarType())
+		{
+			// ta->writeFn(this->line, this->col);
+		}
+		else if (l->isVoid())
+		{
+			// ta->badWriteVoid(this->line, this->col);
+		}
+
+		ta->nodeType(this, l);
 	}
 
 	void EqualsNode::typeAnalysis(TypeAnalysis *ta)
@@ -200,7 +236,7 @@ namespace holeyc
 
 		ta->nodeType(this, tgtType);
 
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
 
 	void NotEqualsNode::typeAnalysis(TypeAnalysis *ta)
@@ -220,7 +256,7 @@ namespace holeyc
 
 		ta->nodeType(this, tgtType);
 
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
 
 	void LessNode::typeAnalysis(TypeAnalysis *ta)
@@ -240,7 +276,7 @@ namespace holeyc
 
 		ta->nodeType(this, tgtType);
 
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
 
 	void GreaterNode::typeAnalysis(TypeAnalysis *ta)
@@ -260,7 +296,7 @@ namespace holeyc
 
 		ta->nodeType(this, tgtType);
 
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
 
 	void LessEqNode::typeAnalysis(TypeAnalysis *ta)
@@ -279,7 +315,7 @@ namespace holeyc
 		}
 
 		ta->nodeType(this, tgtType);
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
 
 	void GreaterEqNode::typeAnalysis(TypeAnalysis *ta)
@@ -298,9 +334,9 @@ namespace holeyc
 		}
 
 		ta->nodeType(this, tgtType);
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
-// ta->badMathOpr() // or anotehr error function in type_analysis.hpp
+	// ta->badMathOpr() // or anotehr error function in type_analysis.hpp
 	void MinusNode::typeAnalysis(TypeAnalysis *ta)
 	{
 		myExp1->typeAnalysis(ta);
@@ -316,7 +352,7 @@ namespace holeyc
 		}
 
 		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
 
 	void PlusNode::typeAnalysis(TypeAnalysis *ta)
@@ -334,7 +370,7 @@ namespace holeyc
 		}
 
 		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
 
 	void TimesNode::typeAnalysis(TypeAnalysis *ta)
@@ -352,7 +388,7 @@ namespace holeyc
 		}
 
 		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
 
 	void DivideNode::typeAnalysis(TypeAnalysis *ta)
@@ -370,7 +406,7 @@ namespace holeyc
 		}
 
 		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(),this->col());
+		ta->badMathOpr(this->line(), this->col());
 	}
 
 	void NegNode::typeAnalysis(TypeAnalysis *ta)

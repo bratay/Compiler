@@ -25,7 +25,7 @@ class PtrType;
 class ErrorType;
 
 enum BaseType{
-	INT, VOID, BOOL, CHAR
+	INT, VOID, BOOL, CHAR, STR
 };
 
 //This class is the superclass for all holeyc types. You
@@ -85,6 +85,9 @@ public:
 	}
 	static BasicType * CHAR(){
 		return produce(BaseType::CHAR);
+	}
+	static BasicType * STR(){
+		return produce(BaseType::STR);
 	}
 	static BasicType * INT(){
 		return produce(BaseType::INT);
