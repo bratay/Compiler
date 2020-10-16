@@ -117,41 +117,146 @@ project)
  * declarations
 */
 
+
+
+
+%left         NOT
+%left         STAR SLASH
+%left         CROSS DASH
+%nonassoc     LESS LESSEQ EQUALS NOTEQUALS GREATER GREATEREQ
+%left         AND
+%left         OR
+%right        ASSIGN
+%precedence   NEG
+
+
+
 %%
 
 /* TODO: add productions for the other nonterminals in the 
    grammar and make sure that all of the productions of the 
    given nonterminals are complete
 */
-program 	: globals
-		  {
-		  }
+program : globals
 
-globals 	: globals decl 
-	  	  { 
-	  	  }
-		| /* epsilon */
-		  {
-		  }
 
-decl 		: varDecl SEMICOLON
-		  { }
 
-varDecl 	: type id
-		  {
-		  }
 
-type 		: INT
-	  	  { 
-		  }
-		| INTPTR
-	  	  { 
-		  }
 
-id		: ID
-		  {
-		  }
-	
+globals : globals decl
+		    | /* epsilon */
+
+
+
+
+decl : varDecl SEMICOLON
+     | fnDecl
+
+
+
+varDecl : type id
+
+
+
+type : INT
+     | BOOL
+     | CHAR
+     | INTPTR
+     | CHARPTR
+     | VOID
+     | BOOLPTR
+
+
+formals : LPAREN RPAREN
+        | LPAREN formalsList RPAREN
+
+
+fnDecl : type id formals fnBody
+
+
+formalsList : formalDecl
+            | formalDecl COMMA formalsList
+
+
+
+
+formalDecl : type id
+
+
+fnBody : LCURLY stmtList RCURLY
+
+
+
+stmt : varDecl SEMICOLON
+     | FROMCONSOLE lval SEMICOLON
+     | assignExp SEMICOLON
+     | lval CROSSCROSS SEMICOLON
+     | lval DASHDASH SEMICOLON
+     | TOCONSOLE exp SEMICOLON
+     | IF LPAREN exp RPAREN LCURLY stmtList RCURLY ELSE LCURLY stmtList RCURLY
+     | RETURN SEMICOLON
+     | WHILE LPAREN exp RPAREN LCURLY stmtList RCURLY
+     | RETURN exp SEMICOLON
+     | IF LPAREN exp RPAREN LCURLY stmtList RCURLY
+     | fncall SEMICOLON
+
+assignExp : lval ASSIGN exp
+
+fncall : id LPAREN RPAREN             // function call with no args
+       | id LPAREN actualList RPAREN  // function call with args
+
+actualList : exp
+           | actualList COMMA exp
+
+exp : assignExp
+    | exp DASH exp
+    | exp STAR exp
+    | exp NOTEQUALS exp
+    | exp CROSS exp
+    | exp OR exp
+    | exp AND exp
+    | exp LESS exp
+    | exp EQUALS exp
+    | exp SLASH exp
+    | NOT exp
+    | DASH term
+    | exp GREATER exp
+    | exp LESSEQ exp
+    | exp GREATEREQ exp
+    | term
+
+
+
+
+stmtList : stmtList stmt
+         | /* epsilon */
+
+
+
+
+lval : id
+     | CARAT id
+     | AT id
+     | id LBRACE exp RBRACE
+
+
+
+
+term : lval
+     | LPAREN exp RPAREN
+     | INTLITERAL
+     | STRLITERAL
+     | FALSE
+     | TRUE
+     | NULLPTR
+     | CHARLIT
+     | fncall
+
+
+
+id : ID
+
+
 %%
 
 void holyc::Parser::error(const std::string& err_message){

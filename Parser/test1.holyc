@@ -1,0 +1,15 @@
+int main() {
+    
+}
+
+bool test2(int i) {
+    bool j;
+    j = true;
+    i = 1;
+}
+
+int test1() {
+    int a;
+    a = 4;
+    return a;
+}
