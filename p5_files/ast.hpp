@@ -33,6 +33,8 @@ class ExpNode;
 class LValNode;
 class IDNode;
 
+// (TypeAnalysis *ta, DataType * type)
+
 class ASTNode{
 public:
 	ASTNode(size_t lineIn, size_t colIn)
@@ -59,7 +61,7 @@ public:
 	: ASTNode(1,1), myGlobals(globalsIn){}
 	void unparse(std::ostream&, int) override;
 	virtual bool nameAnalysis(SymbolTable *) override;
-	virtual void typeAnalysis(TypeAnalysis *);
+	virtual void typeAnalysis(TypeAnalysis *);// override;
 private:
 	std::list<DeclNode *> * myGlobals;
 };
@@ -152,14 +154,17 @@ class StmtNode : public ASTNode{
 public:
 	StmtNode(size_t lIn, size_t cIn) : ASTNode(lIn, cIn){ }
 	virtual void unparse(std::ostream& out, int indent) override = 0;
-	virtual void typeAnalysis(TypeAnalysis *);
+	virtual void typeAnalysis(TypeAnalysis *ta);// override;
+	virtual void typeAnalysis(TypeAnalysis *ta, DataType *type);// override;
+private:
+	ExpNode * myExp;
 };
 
 class DeclNode : public StmtNode{
 public:
 	DeclNode(size_t l, size_t c) : StmtNode(l, c){ }
 	void unparse(std::ostream& out, int indent) override =0;
-	virtual void typeAnalysis(TypeAnalysis *) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 };
 
 class VarDeclNode : public DeclNode{
@@ -170,7 +175,7 @@ public:
 	IDNode * ID(){ return myID; }
 	TypeNode * getTypeNode(){ return myType; }
 	bool nameAnalysis(SymbolTable * symTab) override;
-	virtual void typeAnalysis(TypeAnalysis *) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 private:
 	TypeNode * myType;
 	IDNode * myID;
@@ -201,7 +206,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent) override;
 	virtual bool nameAnalysis(SymbolTable * symTab) override;
-	virtual void typeAnalysis(TypeAnalysis *) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 private:
 	IDNode * myID;
 	TypeNode * myRetType;
@@ -215,7 +220,7 @@ public:
 	: StmtNode(l, c), myExp(expIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
-	virtual void typeAnalysis(TypeAnalysis *) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 private:
 	AssignExpNode * myExp;
 };
@@ -226,6 +231,7 @@ public:
 	: StmtNode(l, c), myDst(dstIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 private:
 	LValNode * myDst;
 };
@@ -236,7 +242,7 @@ public:
 	: StmtNode(l, c), mySrc(srcIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
-	virtual void typeAnalysis(TypeAnalysis *) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 private:
 	ExpNode * mySrc;
 };
@@ -247,7 +253,7 @@ public:
 	: StmtNode(l, c), myLVal(lvalIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	virtual bool nameAnalysis(SymbolTable * symTab) override;
-	virtual void typeAnalysis(TypeAnalysis *) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 private:
 	LValNode * myLVal;
 };
@@ -258,7 +264,7 @@ public:
 	: StmtNode(l, c), myLVal(lvalIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	virtual bool nameAnalysis(SymbolTable * symTab) override;
-	virtual void typeAnalysis(TypeAnalysis *) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 private:
 	LValNode * myLVal;
 };
@@ -308,7 +314,7 @@ public:
 	: StmtNode(l, c), myExp(exp){ }
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
-	void typeAnalysis(TypeAnalysis *ta) override;
+	void typeAnalysis(TypeAnalysis *ta, DataType * type) override;
 private:
 	ExpNode * myExp;
 };
@@ -320,6 +326,7 @@ public:
 	: ExpNode(l, c), myID(id), myArgs(argsIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
+	// virtual void typeAnalysis(TypeAnalysis *ta, DataType *type) override;
 private:
 	IDNode * myID;
 	std::list<ExpNode *> * myArgs;
@@ -373,6 +380,7 @@ public:
 	AndNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 };
 
 class OrNode : public BinaryExpNode{
@@ -380,6 +388,7 @@ public:
 	OrNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 };
 
 class EqualsNode : public BinaryExpNode{
@@ -440,6 +449,7 @@ public:
 	}
 	virtual void unparse(std::ostream& out, int indent) override = 0;
 	virtual bool nameAnalysis(SymbolTable * symTab) override = 0;
+	virtual void typeAnalysis(TypeAnalysis * ta) override;
 protected:
 	ExpNode * myExp;
 };
@@ -469,6 +479,7 @@ public:
 	virtual DataType * getType() override { 
 		return BasicType::VOID(); 
 	}
+	// virtual void typeAnalysis(TypeAnalysis *ta);// override;
 };
 
 class IntTypeNode : public TypeNode{
@@ -485,6 +496,7 @@ public:
 	BoolTypeNode(size_t l, size_t c, bool ptrIn): TypeNode(l, c), isPtr(ptrIn) { }
 	void unparse(std::ostream& out, int indent) override;
 	virtual DataType * getType() override;
+	// virtual void typeAnalysis(TypeAnalysis *ta);// overrride;
 private:
 	const bool isPtr;
 };
@@ -562,6 +574,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 };
 
 class FalseNode : public ExpNode{
@@ -572,6 +585,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
+	virtual void typeAnalysis(TypeAnalysis *ta) override;
 };
 
 class CallStmtNode : public StmtNode{
@@ -580,7 +594,7 @@ public:
 	: StmtNode(l, c), myCallExp(expIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
-	virtual void typeAnalysis(TypeAnalysis *) override;
+	// virtual void typeAnalysis(TypeAnalysis *) override;
 private:
 	CallExpNode * myCallExp;
 };
