@@ -1,4 +1,8 @@
+void foo(){
+    int a;
+}
+
 void fn(){
-    char p;
-    TOCONSOLE p + 1;
+    bool p;
+    p = (true + false) == 7;
 }

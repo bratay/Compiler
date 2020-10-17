@@ -60,7 +60,7 @@ namespace holeyc
 
 		//Note: this function may need extra code
 
-		// ta->nodeType(myID, myRetType->getType());
+		ta->nodeType(myID, myRetType->getType());
 
 		// for (auto stmt : *myFormals)
 		// {
@@ -366,7 +366,7 @@ namespace holeyc
 
 		ta->nodeType(this, tgtType);
 
-		ta->badMathOpr(this->line(), this->col());
+		// ta->badMathOpr(this->line(), this->col());
 	}
 
 	void LessNode::typeAnalysis(TypeAnalysis *ta)
@@ -377,130 +377,11 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
-		if (lhs != rhs)
-		{
-			ta->nodeType(this, ErrorType::produce());
-			ta->badMathOpr(this->line(), this->col());
-			return;
-		}
-
 		if (lhs->isInt() && rhs->isInt())
 		{
 			ta->nodeType(this, BasicType::produce(INT));
 			return;
 		}
-
-		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(), this->col());
-	}
-
-	void GreaterNode::typeAnalysis(TypeAnalysis *ta)
-	{
-		myExp1->typeAnalysis(ta);
-		myExp2->typeAnalysis(ta);
-
-		const DataType *lhs = ta->nodeType(myExp1);
-		const DataType *rhs = ta->nodeType(myExp2);
-
-		if (lhs != rhs)
-		{
-			ta->nodeType(this, ErrorType::produce());
-			ta->badMathOpr(this->line(), this->col());
-			return;
-		}
-
-		if (lhs->isInt() && rhs->isInt())
-		{
-			ta->nodeType(this, BasicType::produce(INT));
-			return;
-		}
-
-		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(), this->col());
-	}
-
-	void LessEqNode::typeAnalysis(TypeAnalysis *ta)
-	{
-		myExp1->typeAnalysis(ta);
-		myExp2->typeAnalysis(ta);
-
-		const DataType *lhs = ta->nodeType(myExp1);
-		const DataType *rhs = ta->nodeType(myExp2);
-
-		if (lhs != rhs)
-		{
-			ta->nodeType(this, ErrorType::produce());
-			ta->badMathOpr(this->line(), this->col());
-			return;
-		}
-
-		if (lhs->isInt() && rhs->isInt())
-		{
-			ta->nodeType(this, BasicType::produce(INT));
-			return;
-		}
-
-		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(), this->col());
-	}
-
-	void GreaterEqNode::typeAnalysis(TypeAnalysis *ta)
-	{
-		myExp1->typeAnalysis(ta);
-		myExp2->typeAnalysis(ta);
-
-		const DataType *lhs = ta->nodeType(myExp1);
-		const DataType *rhs = ta->nodeType(myExp2);
-
-		if (lhs != rhs)
-		{
-			ta->nodeType(this, ErrorType::produce());
-			ta->badMathOpr(this->line(), this->col());
-			return;
-		}
-
-		if (lhs->isInt() && rhs->isInt())
-		{
-			ta->nodeType(this, BasicType::produce(INT));
-			return;
-		}
-
-		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(), this->col());
-	}
-
-	void MinusNode::typeAnalysis(TypeAnalysis *ta)
-	{
-		myExp1->typeAnalysis(ta);
-		myExp2->typeAnalysis(ta);
-
-		const DataType *lhs = ta->nodeType(myExp1);
-		const DataType *rhs = ta->nodeType(myExp2);
-
-		if (lhs != rhs)
-		{
-			ta->nodeType(this, ErrorType::produce());
-			ta->badMathOpr(this->line(), this->col());
-			return;
-		}
-
-		if (lhs->isInt() && rhs->isInt())
-		{
-			ta->nodeType(this, BasicType::produce(INT));
-			return;
-		}
-
-		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(), this->col());
-	}
-
-	void PlusNode::typeAnalysis(TypeAnalysis *ta)
-	{
-		myExp1->typeAnalysis(ta);
-		myExp2->typeAnalysis(ta);
-
-		const DataType *lhs = ta->nodeType(myExp1);
-		const DataType *rhs = ta->nodeType(myExp2);
 
 		if (!lhs->isInt())
 		{
@@ -512,37 +393,142 @@ namespace holeyc
 		{
 			ta->badMathOpr(this->line(), this->col());
 			ta->nodeType(this, ErrorType::produce());
-			return;
 		}
+	}
 
-		if (lhs != rhs)
-		{
-			ta->badMathOpr(this->line(), this->col());
-			ta->nodeType(this, ErrorType::produce());
-			return;
-		}
+	void GreaterNode::typeAnalysis(TypeAnalysis *ta)
+	{
+		myExp1->typeAnalysis(ta);
+		myExp2->typeAnalysis(ta);
 
-		if (lhs->isBool() || rhs->isBool())
-		{
-			ta->badMathOpr(this->line(), this->col());
-			ta->nodeType(this, ErrorType::produce());
-			return;
-		}
+		const DataType *lhs = ta->nodeType(myExp1);
+		const DataType *rhs = ta->nodeType(myExp2);
 
-		if (!lhs->isInt() && rhs->isInt())
+		if (lhs->isInt() && rhs->isInt())
 		{
 			ta->nodeType(this, BasicType::produce(INT));
 			return;
 		}
 
-		if (lhs->isPtr() || rhs->isPtr())
+		if (!lhs->isInt())
 		{
-			ta->badMathOpr(myExp1->line(), myExp1->col());
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+
+		if (!rhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+	}
+
+	void LessEqNode::typeAnalysis(TypeAnalysis *ta)
+	{
+		myExp1->typeAnalysis(ta);
+		myExp2->typeAnalysis(ta);
+
+		const DataType *lhs = ta->nodeType(myExp1);
+		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs->isInt() && rhs->isInt())
+		{
+			ta->nodeType(this, BasicType::produce(INT));
 			return;
 		}
 
-		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(), this->col());
+		if (!lhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+
+		if (!rhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+	}
+
+	void GreaterEqNode::typeAnalysis(TypeAnalysis *ta)
+	{
+		myExp1->typeAnalysis(ta);
+		myExp2->typeAnalysis(ta);
+
+		const DataType *lhs = ta->nodeType(myExp1);
+		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs->isInt() && rhs->isInt())
+		{
+			ta->nodeType(this, BasicType::produce(INT));
+			return;
+		}
+
+		if (!lhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+
+		if (!rhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+	}
+
+	void MinusNode::typeAnalysis(TypeAnalysis *ta)
+	{
+		myExp1->typeAnalysis(ta);
+		myExp2->typeAnalysis(ta);
+
+		const DataType *lhs = ta->nodeType(myExp1);
+		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs->isInt() && rhs->isInt())
+		{
+			ta->nodeType(this, BasicType::produce(INT));
+			return;
+		}
+
+		if (!lhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+
+		if (!rhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+	}
+
+	void PlusNode::typeAnalysis(TypeAnalysis *ta)
+	{
+		myExp1->typeAnalysis(ta);
+		myExp2->typeAnalysis(ta);
+
+		const DataType *lhs = ta->nodeType(myExp1);
+		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs->isInt() && rhs->isInt())
+		{
+			ta->nodeType(this, BasicType::produce(INT));
+			return;
+		}
+
+		if (!lhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+
+		if (!rhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
 	}
 
 	void TimesNode::typeAnalysis(TypeAnalysis *ta)
@@ -553,21 +539,23 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
-		if (lhs != rhs)
-		{
-			ta->nodeType(this, ErrorType::produce());
-			ta->badMathOpr(this->line(), this->col());
-			return;
-		}
-
 		if (lhs->isInt() && rhs->isInt())
 		{
 			ta->nodeType(this, BasicType::produce(INT));
 			return;
 		}
 
-		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(), this->col());
+		if (!lhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+
+		if (!rhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
 	}
 
 	void DivideNode::typeAnalysis(TypeAnalysis *ta)
@@ -584,8 +572,17 @@ namespace holeyc
 			return;
 		}
 
-		ta->nodeType(this, ErrorType::produce());
-		ta->badMathOpr(this->line(), this->col());
+		if (!lhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+
+		if (!rhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
 	}
 
 	void NegNode::typeAnalysis(TypeAnalysis *ta)
@@ -680,20 +677,23 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
-		if (!lhs->isBool() || !rhs->isBool())
+		if (lhs->isBool() && rhs->isBool())
+		{
+			ta->nodeType(this, rhs);
+			return;
+		}
+
+		if (!lhs->isBool() )
 		{
 			ta->badLogicOpd(this->line(), this->col());
 			ta->nodeType(this, ErrorType::produce());
 		}
 
-		if (lhs != rhs)
+		if( !rhs->isBool() )
 		{
-			ta->badMathOpr(this->line(), this->col());
+			ta->badLogicOpd(this->line(), this->col());
 			ta->nodeType(this, ErrorType::produce());
-			return;
 		}
-
-		ta->nodeType(this, rhs);
 	}
 
 	void OrNode::typeAnalysis(TypeAnalysis *ta)
@@ -704,20 +704,23 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
-		if (!lhs->isBool() || !rhs->isBool())
+		if (lhs->isBool() && rhs->isBool())
+		{
+			ta->nodeType(this, rhs);
+			return;
+		}
+
+		if (!lhs->isBool() )
 		{
 			ta->badLogicOpd(this->line(), this->col());
 			ta->nodeType(this, ErrorType::produce());
 		}
 
-		if (lhs != rhs)
+		if( !rhs->isBool() )
 		{
-			ta->badMathOpr(this->line(), this->col());
+			ta->badLogicOpd(this->line(), this->col());
 			ta->nodeType(this, ErrorType::produce());
-			return;
 		}
-
-		ta->nodeType(this, rhs);
 	}
 
 	void UnaryExpNode::typeAnalysis(TypeAnalysis *ta)
