@@ -3,6 +3,6 @@ void foo(){
 }
 
 void fn(){
-    bool p;
-    p = (true + false) == 7;
+    int p;
+    p = (4 + 3);
 }
