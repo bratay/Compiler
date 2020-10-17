@@ -1,6 +1,4 @@
-void f(int var){
-    int b;
-}
 void fn(){
-    f("a" * 4);
+    char p;
+    TOCONSOLE p + 1;
 }

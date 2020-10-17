@@ -73,6 +73,7 @@ public:
 	virtual void unparse(std::ostream& out, int indent) override = 0;
 	virtual bool nameAnalysis(SymbolTable * symTab) override = 0;
 	virtual void typeAnalysis(TypeAnalysis *);
+	virtual void typeAnalysis(TypeAnalysis *ta, DataType *type);
 };
 
 class LValNode : public ExpNode{
@@ -326,7 +327,8 @@ public:
 	: ExpNode(l, c), myID(id), myArgs(argsIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
-	// virtual void typeAnalysis(TypeAnalysis *ta, DataType *type) override;
+	// void typeAnalysis(TypeAnalysis *ta, DataType *type) override;
+	// void typeAnalysis(TypeAnalysis *ta) override;//, DataType *type) override;
 private:
 	IDNode * myID;
 	std::list<ExpNode *> * myArgs;

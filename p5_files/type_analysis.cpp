@@ -60,6 +60,20 @@ namespace holeyc
 
 		//Note: this function may need extra code
 
+		// ta->nodeType(myID, myRetType->getType());
+
+		// for (auto stmt : *myFormals)
+		// {
+		// 	stmt->typeAnalysis(ta);
+		// 	// myID->addExpArg();
+		// }
+
+		// for (auto stmt : *myBody)
+		// {
+		// 	stmt->typeAnalysis(ta, myRetType->getType());
+		// }
+
+
 		for (auto stmt : *myBody)
 		{
 			stmt->typeAnalysis(ta);
@@ -68,12 +82,10 @@ namespace holeyc
 
 	void StmtNode::typeAnalysis(TypeAnalysis *ta)
 	{
-
 	}
 
 	void StmtNode::typeAnalysis(TypeAnalysis *ta, DataType *type)
 	{
-
 	}
 
 	// void VoidTypeNode::typeAnalysis(TypeAnalysis *ta)
@@ -111,8 +123,10 @@ namespace holeyc
 
 	void ExpNode::typeAnalysis(TypeAnalysis *ta)
 	{
-		// TODO("Override me in the subclass");
-		// ta->nodeType(this, tgtType);
+	}
+
+	void ExpNode::typeAnalysis(TypeAnalysis *ta, DataType *type)
+	{
 	}
 
 	void AssignExpNode::typeAnalysis(TypeAnalysis *ta)
@@ -124,10 +138,19 @@ namespace holeyc
 		myDst->typeAnalysis(ta);
 		mySrc->typeAnalysis(ta);
 
-		const DataType *tgtType = ta->nodeType(myDst);
-		const DataType *srcType = ta->nodeType(mySrc);
+		const DataType *lhs = ta->nodeType(myDst);
+		const DataType *rhs = ta->nodeType(mySrc);
 
-		ta->nodeType(this, tgtType);
+		// ta->badAssignOpr(this->line(), this->col());
+
+		// if (lhs != rhs)
+		// {
+		// 	ta->nodeType(this, ErrorType::produce());
+		// 	ta->badAssignOpr(this->line(), this->col());
+		// 	return;
+		// }
+
+		ta->nodeType(this, lhs);
 		return;
 
 		//While incomplete, this gives you one case for
@@ -135,41 +158,40 @@ namespace holeyc
 		// it is usually ok to do the assignment. One
 		// exception is that if both types are function
 		// names, it should fail type analysis
-		if (tgtType->asFn() == nullptr && srcType->asFn() == nullptr)
-		{
-			ta->nodeType(this, ErrorType::produce());
-			ta->badAssignOpr(this->line(), this->col());
+		// if (tgtType->asFn() == nullptr && srcType->asFn() == nullptr)
+		// {
+		// 	ta->nodeType(this, ErrorType::produce());
+		// 	ta->badAssignOpr(this->line(), this->col());
 
-			if (tgtType->asFn() == nullptr)
-				ta->readFn(this->line(), this->col());
-			if (srcType->asFn() == nullptr)
-				ta->readFn(this->line(), this->col());
+		// 	if (tgtType->asFn() == nullptr)
+		// 		ta->readFn(this->line(), this->col());
+		// 	if (srcType->asFn() == nullptr)
+		// 		ta->readFn(this->line(), this->col());
 
-			return;
-		}
+		// 	return;
+		// }
 
-		if (tgtType == srcType)
-		{
-			ta->nodeType(this, tgtType);
-			return;
-		}
+		// if (tgtType == srcType)
+		// {
+		// 	ta->nodeType(this, tgtType);
+		// 	return;
+		// }
 
 		//Some functions are already defined for you to
 		// report type errors. Note that these functions
 		// also tell the typeAnalysis object that the
 		// analysis has failed, meaning that main.cpp
 		// will print "Type check failed" at the end
-		ta->badAssignOpr(this->line(), this->col());
+		// ta->badAssignOpr(this->line(), this->col());
 
 		//Note that reporting an error does not set the
 		// type of the current node, so setting the node
 		// type must be done
-		ta->nodeType(this, ErrorType::produce());
+		// ta->nodeType(this, ErrorType::produce());
 	}
 
 	void DeclNode::typeAnalysis(TypeAnalysis *ta)
 	{
-		TODO("Override me in the subclass");
 	}
 
 	void VarDeclNode::typeAnalysis(TypeAnalysis *ta)
@@ -190,8 +212,6 @@ namespace holeyc
 
 	void IntLitNode::typeAnalysis(TypeAnalysis *ta)
 	{
-		// IntLits never fail their type analysis and always
-		// yield the type INT
 		ta->nodeType(this, BasicType::produce(INT));
 	}
 
@@ -223,38 +243,38 @@ namespace holeyc
 
 	void ReturnStmtNode::typeAnalysis(TypeAnalysis *ta, DataType *type)
 	{
-		if (myExp == nullptr && type->isVoid())
-		{
-			ta->nodeType(this, nullptr);
-			return;
-		}
+		// if (myExp == nullptr && type->isVoid())
+		// {
+		// 	ta->nodeType(this, nullptr);
+		// 	return;
+		// }
 
-		if (myExp == nullptr && !type->isVoid())
-		{
-			ta->badNoRet(this->line(), this->col());
-			ta->nodeType(this, ErrorType::produce());
-			return;
-		}
+		// if (myExp == nullptr && !type->isVoid())
+		// {
+		// 	ta->badNoRet(this->line(), this->col());
+		// 	ta->nodeType(this, ErrorType::produce());
+		// 	return;
+		// }
 
-		myExp->typeAnalysis(ta);
-		const DataType *nodeType = ta->nodeType(myExp);
+		// myExp->typeAnalysis(ta);
+		// const DataType *nodeType = ta->nodeType(myExp);
 
-		if (nodeType == type)
-		{
-			ta->nodeType(this, nullptr);
-		}
-		else if (nodeType->isVoid())
-		{
-			ta->extraRetValue(this->line(), this->col());
-			ta->nodeType(this, ErrorType::produce());
-			return;
-		}
-		else if (nodeType != type && !nodeType->isVoid())
-		{
-			ta->extraRetValue(this->line(), this->col());
-			ta->nodeType(this, ErrorType::produce());
-			return;
-		}
+		// if (nodeType == type)
+		// {
+		// 	ta->nodeType(this, nullptr);
+		// }
+		// else if (nodeType->isVoid())
+		// {
+		// 	ta->extraRetValue(this->line(), this->col());
+		// 	ta->nodeType(this, ErrorType::produce());
+		// 	return;
+		// }
+		// else if (nodeType != type && !nodeType->isVoid())
+		// {
+		// 	ta->extraRetValue(this->line(), this->col());
+		// 	ta->nodeType(this, ErrorType::produce());
+		// 	return;
+		// }
 
 		// myExp->typeAnalysis(ta);
 		// const DataType *tgtType = ta->nodeType(myExp);
@@ -324,13 +344,6 @@ namespace holeyc
 			return;
 		}
 
-		// if ((tgtType->asFn() == nullptr && srcType->asFn() == nullptr))
-		// {
-		// 	ta->nodeType(this, ErrorType::produce());
-		// 	ta->badAssignOpr(this->line(), this->col());
-		// 	return;
-		// }
-
 		ta->nodeType(this, tgtType);
 
 		// ta->badMathOpr(this->line(), this->col());
@@ -361,18 +374,23 @@ namespace holeyc
 		myExp1->typeAnalysis(ta);
 		myExp2->typeAnalysis(ta);
 
-		const DataType *tgtType = ta->nodeType(myExp1);
-		const DataType *srcType = ta->nodeType(myExp2);
+		const DataType *lhs = ta->nodeType(myExp1);
+		const DataType *rhs = ta->nodeType(myExp2);
 
-		if ((tgtType->asFn() == nullptr && srcType->asFn() == nullptr) || (tgtType != srcType))
+		if (lhs != rhs)
 		{
 			ta->nodeType(this, ErrorType::produce());
-			ta->badAssignOpr(this->line(), this->col());
+			ta->badMathOpr(this->line(), this->col());
 			return;
 		}
 
-		ta->nodeType(this, tgtType);
+		if (lhs->isInt() && rhs->isInt())
+		{
+			ta->nodeType(this, BasicType::produce(INT));
+			return;
+		}
 
+		ta->nodeType(this, ErrorType::produce());
 		ta->badMathOpr(this->line(), this->col());
 	}
 
@@ -381,18 +399,23 @@ namespace holeyc
 		myExp1->typeAnalysis(ta);
 		myExp2->typeAnalysis(ta);
 
-		const DataType *tgtType = ta->nodeType(myExp1);
-		const DataType *srcType = ta->nodeType(myExp2);
+		const DataType *lhs = ta->nodeType(myExp1);
+		const DataType *rhs = ta->nodeType(myExp2);
 
-		if ((tgtType->asFn() == nullptr && srcType->asFn() == nullptr) || (tgtType != srcType))
+		if (lhs != rhs)
 		{
 			ta->nodeType(this, ErrorType::produce());
-			ta->badAssignOpr(this->line(), this->col());
+			ta->badMathOpr(this->line(), this->col());
 			return;
 		}
 
-		ta->nodeType(this, tgtType);
+		if (lhs->isInt() && rhs->isInt())
+		{
+			ta->nodeType(this, BasicType::produce(INT));
+			return;
+		}
 
+		ta->nodeType(this, ErrorType::produce());
 		ta->badMathOpr(this->line(), this->col());
 	}
 
@@ -401,17 +424,23 @@ namespace holeyc
 		myExp1->typeAnalysis(ta);
 		myExp2->typeAnalysis(ta);
 
-		const DataType *tgtType = ta->nodeType(myExp1);
-		const DataType *srcType = ta->nodeType(myExp2);
+		const DataType *lhs = ta->nodeType(myExp1);
+		const DataType *rhs = ta->nodeType(myExp2);
 
-		if ((tgtType->asFn() == nullptr && srcType->asFn() == nullptr) || (tgtType != srcType))
+		if (lhs != rhs)
 		{
 			ta->nodeType(this, ErrorType::produce());
-			ta->badAssignOpr(this->line(), this->col());
+			ta->badMathOpr(this->line(), this->col());
 			return;
 		}
 
-		ta->nodeType(this, tgtType);
+		if (lhs->isInt() && rhs->isInt())
+		{
+			ta->nodeType(this, BasicType::produce(INT));
+			return;
+		}
+
+		ta->nodeType(this, ErrorType::produce());
 		ta->badMathOpr(this->line(), this->col());
 	}
 
@@ -420,17 +449,23 @@ namespace holeyc
 		myExp1->typeAnalysis(ta);
 		myExp2->typeAnalysis(ta);
 
-		const DataType *tgtType = ta->nodeType(myExp1);
-		const DataType *srcType = ta->nodeType(myExp2);
+		const DataType *lhs = ta->nodeType(myExp1);
+		const DataType *rhs = ta->nodeType(myExp2);
 
-		if ((tgtType->asFn() == nullptr && srcType->asFn() == nullptr) || (tgtType != srcType))
+		if (lhs != rhs)
 		{
 			ta->nodeType(this, ErrorType::produce());
-			ta->badAssignOpr(this->line(), this->col());
+			ta->badMathOpr(this->line(), this->col());
 			return;
 		}
 
-		ta->nodeType(this, tgtType);
+		if (lhs->isInt() && rhs->isInt())
+		{
+			ta->nodeType(this, BasicType::produce(INT));
+			return;
+		}
+
+		ta->nodeType(this, ErrorType::produce());
 		ta->badMathOpr(this->line(), this->col());
 	}
 
@@ -441,6 +476,13 @@ namespace holeyc
 
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs != rhs)
+		{
+			ta->nodeType(this, ErrorType::produce());
+			ta->badMathOpr(this->line(), this->col());
+			return;
+		}
 
 		if (lhs->isInt() && rhs->isInt())
 		{
@@ -460,10 +502,42 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
-		if (lhs->isInt() && rhs->isInt())
+		if (!lhs->isInt())
 		{
-			// ta->nodeType(this, BasicType::produce(INT));
-			ta->nodeType(this, rhs);
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+		}
+
+		if (!rhs->isInt())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+			return;
+		}
+
+		if (lhs != rhs)
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+			return;
+		}
+
+		if (lhs->isBool() || rhs->isBool())
+		{
+			ta->badMathOpr(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+			return;
+		}
+
+		if (!lhs->isInt() && rhs->isInt())
+		{
+			ta->nodeType(this, BasicType::produce(INT));
+			return;
+		}
+
+		if (lhs->isPtr() || rhs->isPtr())
+		{
+			ta->badMathOpr(myExp1->line(), myExp1->col());
 			return;
 		}
 
@@ -478,6 +552,13 @@ namespace holeyc
 
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs != rhs)
+		{
+			ta->nodeType(this, ErrorType::produce());
+			ta->badMathOpr(this->line(), this->col());
+			return;
+		}
 
 		if (lhs->isInt() && rhs->isInt())
 		{
@@ -567,20 +648,28 @@ namespace holeyc
 			return;
 		}
 
-		ta->nodeType(this, rhs);
+		if (lhs->isBool())
+			ta->nodeType(this, BasicType::produce(BOOL));
+		else if (lhs->isInt())
+			ta->nodeType(this, BasicType::produce(INT));
+		else if (lhs->isChar())
+			ta->nodeType(this, BasicType::produce(CHAR));
 	}
 
 	// void CallExpNode::typeAnalysis(TypeAnalysis *ta, DataType *type)
+	// void CallExpNode::typeAnalysis(TypeAnalysis *ta)
 	// {
+	// 	myID->typeAnalysis(ta);
+	// 	const DataType *nodeType = ta->nodeType(myID);
 
-	// }
-	// void CallStmtNode::typeAnalysis(TypeAnalysis *ta)
-	// {
-	// 	return;
-	// }
+	// 	// if (nodeType != type)
+	// 	// {
+	// 	// 	ta->badMathOpd(this->line(), this->col());
+	// 	// 	ta->nodeType(this, ErrorType::produce());
+	// 	// 	return;
+	// 	// }
 
-	// void FormalDeclNode::typeAnalysis(TypeAnalysis *ta)
-	// {
+	// 	ta->nodeType(this, nodeType);
 	// }
 
 	void AndNode::typeAnalysis(TypeAnalysis *ta)
@@ -591,7 +680,8 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
-		if(!lhs->isBool() || !rhs->isBool()){
+		if (!lhs->isBool() || !rhs->isBool())
+		{
 			ta->badLogicOpd(this->line(), this->col());
 			ta->nodeType(this, ErrorType::produce());
 		}
@@ -614,7 +704,8 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
-		if(!lhs->isBool() || !rhs->isBool()){
+		if (!lhs->isBool() || !rhs->isBool())
+		{
 			ta->badLogicOpd(this->line(), this->col());
 			ta->nodeType(this, ErrorType::produce());
 		}
