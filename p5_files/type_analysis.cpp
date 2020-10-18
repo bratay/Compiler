@@ -48,7 +48,7 @@ namespace holeyc
 		ta->nodeType(this, BasicType::produce(VOID));
 	}
 
-	void FnDeclNode::typeAnalysis(TypeAnalysis *ta)
+	void FnDeclNode::typeAnalysis(TypeAnalysis *ta) //, DataType* type)
 	{
 
 		//HINT: you might want to change the signature for
@@ -60,19 +60,13 @@ namespace holeyc
 
 		//Note: this function may need extra code
 
+		// ta->nodeType(this, myRetType->getType());
 		ta->nodeType(myID, myRetType->getType());
 
-		// for (auto stmt : *myFormals)
-		// {
-		// 	stmt->typeAnalysis(ta);
-		// 	// myID->addExpArg();
-		// }
-
-		// for (auto stmt : *myBody)
-		// {
-		// 	stmt->typeAnalysis(ta, myRetType->getType());
-		// }
-
+		for (auto stmt : *myFormals)
+		{
+			stmt->typeAnalysis(ta);
+		}
 
 		for (auto stmt : *myBody)
 		{
@@ -131,14 +125,14 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myDst);
 		const DataType *rhs = ta->nodeType(mySrc);
 
-		if(lhs->isVoid())
+		if (lhs->isVoid())
 		{
 			ta->nodeType(this, ErrorType::produce());
 			ta->badWriteVoid(myDst->line(), myDst->col());
 			return;
 		}
 
-		if(rhs->isVoid())
+		if (rhs->isVoid())
 		{
 			ta->nodeType(this, ErrorType::produce());
 			ta->badWriteVoid(mySrc->line(), mySrc->col());
@@ -158,6 +152,10 @@ namespace holeyc
 	void DeclNode::typeAnalysis(TypeAnalysis *ta)
 	{
 	}
+
+	// void DeclNode::typeAnalysis(TypeAnalysis *ta, DataType *type)
+	// {
+	// }
 
 	void VarDeclNode::typeAnalysis(TypeAnalysis *ta)
 	{
@@ -208,6 +206,9 @@ namespace holeyc
 
 	void ReturnStmtNode::typeAnalysis(TypeAnalysis *ta, DataType *type)
 	{
+		// myExp->typeAnalysis(ta);
+		// const DataType *nodeType = ta->nodeType(myExp);
+
 		if (myExp == nullptr && type->isVoid())
 		{
 			ta->nodeType(this, nullptr);
@@ -221,29 +222,28 @@ namespace holeyc
 			return;
 		}
 
-		// myExp->typeAnalysis(ta);
-		// const DataType *nodeType = ta->nodeType(myExp);
+		myExp->typeAnalysis(ta);
+		const DataType *nodeType = ta->nodeType(myExp);
 
-		// if (nodeType == type)
-		// {
-		// 	ta->nodeType(this, nullptr);
-		// }
-		// else if (nodeType->isVoid())
-		// {
-		// 	ta->extraRetValue(this->line(), this->col());
-		// 	ta->nodeType(this, ErrorType::produce());
-		// 	return;
-		// }
-		// else if (nodeType != type && !nodeType->isVoid())
-		// {
-		// 	ta->extraRetValue(this->line(), this->col());
-		// 	ta->nodeType(this, ErrorType::produce());
-		// 	return;
-		// }
+		if (nodeType == type)
+		{
+			ta->nodeType(this, nullptr);
+			return;
+		}
+		else if (nodeType->isVoid())
+		{
+			ta->extraRetValue(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+			return;
+		}
+		else if (nodeType != type && !nodeType->isVoid())
+		{
+			ta->extraRetValue(this->line(), this->col());
+			ta->nodeType(this, ErrorType::produce());
+			return;
+		}
 
-		// myExp->typeAnalysis(ta);
-		// const DataType *tgtType = ta->nodeType(myExp);
-		// ta->nodeType(this, tgtType);
+		ta->nodeType(this, nodeType);
 	}
 
 	void FromConsoleStmtNode::typeAnalysis(TypeAnalysis *ta)
@@ -302,6 +302,22 @@ namespace holeyc
 		const DataType *tgtType = ta->nodeType(myExp1);
 		const DataType *srcType = ta->nodeType(myExp2);
 
+		// std::size_t found = tgtType->getString().find("->");
+		// if (found != std::string::npos)
+		// {
+		// 	ta->nodeType(this, ErrorType::produce());
+		// 	ta->badMathOpd(myExp1->line(), myExp1->col());
+		// 	return;
+		// }
+
+		// found = srcType->getString().find("->");
+		// if (found != std::string::npos)
+		// {
+		// 	ta->nodeType(this, ErrorType::produce());
+		// 	ta->badMathOpd(myExp2->line(), myExp2->col());
+		// 	return;
+		// }
+
 		if (tgtType != srcType)
 		{
 			ta->nodeType(this, ErrorType::produce());
@@ -310,8 +326,6 @@ namespace holeyc
 		}
 
 		ta->nodeType(this, tgtType);
-
-		// ta->badMathOpr(this->line(), this->col());
 	}
 
 	void NotEqualsNode::typeAnalysis(TypeAnalysis *ta)
@@ -476,6 +490,25 @@ namespace holeyc
 
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
+		// const FnType *fn = ta->getCurrentFnType(); // ta->nodeType(myExp2);
+
+		// std::size_t found = lhs->getString().find("->");
+		// if (found != std::string::npos)
+		// {
+		// 	ta->nodeType(this, ErrorType::produce());
+		// 	ta->badMathOpd(myExp1->line(), myExp1->col());
+		// 	return;
+		// }
+
+		// found = rhs->getString().find("->");
+		// if (found != std::string::npos)
+		// {
+		// 	ta->nodeType(this, ErrorType::produce());
+		// 	ta->badMathOpd(myExp2->line(), myExp2->col());
+		// 	return;
+		// }
+
+
 
 		if (lhs->isInt() && rhs->isInt())
 		{
@@ -648,13 +681,13 @@ namespace holeyc
 			return;
 		}
 
-		if (!lhs->isBool() )
+		if (!lhs->isBool())
 		{
 			ta->badLogicOpd(myExp1->line(), myExp1->col());
 			ta->nodeType(this, ErrorType::produce());
 		}
 
-		if( !rhs->isBool() )
+		if (!rhs->isBool())
 		{
 			ta->badLogicOpd(myExp2->line(), myExp2->col());
 			ta->nodeType(this, ErrorType::produce());
@@ -675,13 +708,13 @@ namespace holeyc
 			return;
 		}
 
-		if (!lhs->isBool() )
+		if (!lhs->isBool())
 		{
 			ta->badLogicOpd(myExp1->line(), myExp1->col());
 			ta->nodeType(this, ErrorType::produce());
 		}
 
-		if( !rhs->isBool() )
+		if (!rhs->isBool())
 		{
 			ta->badLogicOpd(myExp2->line(), myExp2->col());
 			ta->nodeType(this, ErrorType::produce());

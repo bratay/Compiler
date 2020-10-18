@@ -1,8 +1,10 @@
-void foo(){
+void foo(int x, int y){
     int a;
 }
 
-void fn(){
+int fn(){
     int p;
-    p = (4 + 3);
+    TOCONSOLE p;
+    p = 1 + false;
+    return p;
 }

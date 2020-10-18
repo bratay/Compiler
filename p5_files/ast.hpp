@@ -166,6 +166,7 @@ public:
 	DeclNode(size_t l, size_t c) : StmtNode(l, c){ }
 	void unparse(std::ostream& out, int indent) override =0;
 	virtual void typeAnalysis(TypeAnalysis *ta) override;
+	// virtual void typeAnalysis(TypeAnalysis *ta, DataType *type) override;
 };
 
 class VarDeclNode : public DeclNode{
@@ -208,6 +209,7 @@ public:
 	void unparse(std::ostream& out, int indent) override;
 	virtual bool nameAnalysis(SymbolTable * symTab) override;
 	virtual void typeAnalysis(TypeAnalysis *ta) override;
+	// virtual void typeAnalysis(TypeAnalysis *ta, DataType* type) override;
 private:
 	IDNode * myID;
 	TypeNode * myRetType;
