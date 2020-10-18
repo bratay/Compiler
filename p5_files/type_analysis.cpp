@@ -93,6 +93,9 @@ namespace holeyc
 		// should be
 		auto subType = ta->nodeType(myExp);
 
+		// if (type->asError()){ return; }
+
+
 		// As error returns null if subType is NOT an error type
 		// otherwise, it returns the subType itself
 		if (subType->asError())
@@ -124,6 +127,9 @@ namespace holeyc
 
 		const DataType *lhs = ta->nodeType(myDst);
 		const DataType *rhs = ta->nodeType(mySrc);
+
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
 
 		if (lhs->isVoid())
 		{
@@ -193,6 +199,8 @@ namespace holeyc
 		myExp->typeAnalysis(ta);
 		const DataType *tgtType = ta->nodeType(myExp);
 
+		if (tgtType->asError()){ return; }
+
 		if (tgtType->isBool() || tgtType->isInt())
 		{
 			ta->nodeType(this, tgtType);
@@ -225,6 +233,8 @@ namespace holeyc
 		myExp->typeAnalysis(ta);
 		const DataType *nodeType = ta->nodeType(myExp);
 
+		if (nodeType->asError()){ return; }
+
 		if (nodeType == type)
 		{
 			ta->nodeType(this, nullptr);
@@ -251,6 +261,8 @@ namespace holeyc
 		myDst->typeAnalysis(ta);
 		const DataType *nodeType = ta->nodeType(myDst);
 
+		if (nodeType->asError()){ return; }
+
 		if (!nodeType->validVarType())
 		{
 			ta->nodeType(this, ErrorType::produce());
@@ -271,6 +283,8 @@ namespace holeyc
 	{
 		mySrc->typeAnalysis(ta);
 		const DataType *nodeType = ta->nodeType(mySrc);
+
+		if (nodeType->asError()){ return; }
 
 		// if(nodeType->asFn() == nullptr){
 		// 	ta->nodeType(this, ErrorType::produce());
@@ -301,6 +315,10 @@ namespace holeyc
 
 		const DataType *tgtType = ta->nodeType(myExp1);
 		const DataType *srcType = ta->nodeType(myExp2);
+		
+		if (tgtType->asError()){ return; }
+		if (srcType->asError()){ return; }
+
 
 		// std::size_t found = tgtType->getString().find("->");
 		// if (found != std::string::npos)
@@ -336,6 +354,9 @@ namespace holeyc
 		const DataType *tgtType = ta->nodeType(myExp1);
 		const DataType *srcType = ta->nodeType(myExp2);
 
+		if (tgtType->asError()){ return; }
+		if (srcType->asError()){ return; }
+
 		if (tgtType != srcType)
 		{
 			ta->nodeType(this, ErrorType::produce());
@@ -355,6 +376,9 @@ namespace holeyc
 
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
 
 		if (lhs->isInt() && rhs->isInt())
 		{
@@ -383,6 +407,9 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
+
 		if (lhs->isInt() && rhs->isInt())
 		{
 			ta->nodeType(this, BasicType::produce(INT));
@@ -410,6 +437,9 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
+
 		if (lhs->isInt() && rhs->isInt())
 		{
 			ta->nodeType(this, BasicType::produce(INT));
@@ -436,6 +466,9 @@ namespace holeyc
 
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
 
 		if (lhs->isInt() && rhs->isInt())
 		{
@@ -490,6 +523,9 @@ namespace holeyc
 
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
 		// const FnType *fn = ta->getCurrentFnType(); // ta->nodeType(myExp2);
 
 		// std::size_t found = lhs->getString().find("->");
@@ -537,6 +573,9 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
+
 		if (lhs->isInt() && rhs->isInt())
 		{
 			ta->nodeType(this, BasicType::produce(INT));
@@ -564,6 +603,9 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
+
 		if (lhs->isInt() && rhs->isInt())
 		{
 			ta->nodeType(this, BasicType::produce(INT));
@@ -587,6 +629,8 @@ namespace holeyc
 	{
 		myExp->typeAnalysis(ta);
 		const DataType *tgtType = ta->nodeType(myExp);
+
+		if (tgtType->asError()){ return; }
 
 		if (tgtType->isInt())
 		{
@@ -675,6 +719,9 @@ namespace holeyc
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
 
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
+
 		if (lhs->isBool() && rhs->isBool())
 		{
 			ta->nodeType(this, rhs);
@@ -701,6 +748,9 @@ namespace holeyc
 
 		const DataType *lhs = ta->nodeType(myExp1);
 		const DataType *rhs = ta->nodeType(myExp2);
+
+		if (lhs->asError()){ return; }
+		if (rhs->asError()){ return; }
 
 		if (lhs->isBool() && rhs->isBool())
 		{

@@ -1,10 +1,8 @@
-void foo(int x, int y){
+void foo(bool x){
     int a;
 }
 
-int fn(){
-    int p;
-    TOCONSOLE p;
-    p = 1 + false;
-    return p;
+void fn(){
+    int x; 
+    x = 1 + foo(true);
 }
