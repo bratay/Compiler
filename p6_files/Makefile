@@ -31,7 +31,7 @@ lexer.yy.cc: holeyc.l
 	$(LEXER_TOOL) --outfile=lexer.yy.cc $<
 
 lexer.o: lexer.yy.cc
-	$(CXX) $(FLAGS) -Wno-sign-compare -Wno-sign-conversion -Wno-old-style-cast -Wno-switch-default -g -std=c++14 -c lexer.yy.cc -o lexer.o
+	$(CXX) $(FLAGS) -Wno-deprecated-register -Wno-sign-compare -Wno-sign-conversion -Wno-old-style-cast -Wno-switch-default -g -std=c++14 -c lexer.yy.cc -o lexer.o
 
 test: p6
 

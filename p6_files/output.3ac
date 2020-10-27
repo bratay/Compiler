@@ -1,0 +1,13 @@
+[BEGIN GLOBALS]
+[END GLOBALS]
+[BEGIN fn LOCALS]
+a (local)
+tmp0 (tmp)
+tmp1 (tmp)
+[END fn LOCALS]
+lbl_fun_fn: enter fn
+tmp0 := 4 ADD64 5
+a := tmp0
+INPUT a
+lbl_0: leave fn
+
