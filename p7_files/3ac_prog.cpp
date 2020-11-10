@@ -39,6 +39,10 @@ Opd * IRProgram::makeString(std::string val){
 	return opd;
 }
 
+ std::list<Procedure *> IRProgram::getProcs(){
+	return procs;
+}
+
 std::string IRProgram::toString(bool verbose){
 	std::string res = "";
 	res += "[BEGIN GLOBALS]\n";

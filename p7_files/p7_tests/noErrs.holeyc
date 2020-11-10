@@ -3,3 +3,8 @@ int fn(){
 	a = 4;
 	TOCONSOLE a;
 }
+
+int main(){
+	fn();
+	return 0;
+}
