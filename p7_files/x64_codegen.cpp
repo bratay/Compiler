@@ -20,9 +20,9 @@ namespace holeyc
 		// call allocGlobals()
 
 		/**
-	 * Write out data section with all .ascci and .quad
-	 * Do quad first then .asci
-	 * */
+		* Write out data section with all .ascci and .quad
+		* Do quad first then .asci
+		* */
 
 		// Put this directive after you write out strings
 		// so that everything is aligned to a quadword value
@@ -185,7 +185,35 @@ namespace holeyc
 
 	void SetArgQuad::codegenX64(std::ostream &out)
 	{
-		TODO(Implement me)
+		//  6 args with function
+		if (index == 1)
+		{
+			out << "movq $" << opd->valString() << ", %rdi\n";
+		}
+		else if (index == 2)
+		{
+			out << "movq $" << opd->valString() << ", %rax\n";
+		}
+		else if (index == 3)
+		{
+			out << "movq $" << opd->valString() << ", %rsi\n";
+		}
+		else if (index == 4)
+		{
+			out << "movq $" << opd->valString() << ", %rdx\n";
+		}
+		else if (index == 5)
+		{
+			out << "movq $" << opd->valString() << ", %rcx\n";
+		}
+		else if (index == 6)
+		{
+			out << "movq $" << opd->valString() << ", %rsi\n";
+		}
+		else if (index == 7)
+		{
+			out << "movq $" << opd->valString() << ", %rsp\n";
+		}
 	}
 
 	void GetArgQuad::codegenX64(std::ostream &out)
@@ -195,22 +223,22 @@ namespace holeyc
 
 	void SetRetQuad::codegenX64(std::ostream &out)
 	{
-		TODO(Implement me)
+		opd->genLoad(out,"%rax");
 	}
 
 	void GetRetQuad::codegenX64(std::ostream &out)
 	{
-		TODO(Implement me)
+		opd->genStore(out,"%rax");
 	}
 
 	void SymOpd::genLoad(std::ostream &out, std::string regStr)
 	{
-		TODO(Implement me)
+		out << "movq" << myLoc << ", " << regStr << "\n";
 	}
 
 	void SymOpd::genStore(std::ostream &out, std::string regStr)
 	{
-		TODO(Implement me)
+		out << "movq" << regStr << ", " << myLoc << "\n";
 	}
 
 	void AuxOpd::genLoad(std::ostream &out, std::string regStr)
