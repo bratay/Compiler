@@ -243,17 +243,17 @@ namespace holeyc
 
 	void AuxOpd::genLoad(std::ostream &out, std::string regStr)
 	{
-		TODO(Implement me)
+		out << "movq " << myLoc << "(%rbp), " << regStr << "\n";
 	}
 
 	void AuxOpd::genStore(std::ostream &out, std::string regStr)
 	{
-		TODO(Implement me)
+		out << "movq " << regStr << "(%rbp), " << myLoc << "\n";
 	}
 
 	void LitOpd::genLoad(std::ostream &out, std::string regStr)
 	{
-		TODO(Implement me)
+		out << "movq $" << val << ", " << regStr << "\n";
 	}
 
 	void LitOpd::genStore(std::ostream &out, std::string regStr)
