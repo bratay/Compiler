@@ -7,39 +7,34 @@ namespace holeyc
 
 	void IRProgram::allocGlobals()
 	{
-		TODO(Write out data section)
-		// int i = 1;
-		// for(auto  cur : globals){
-		// cur.second->myLoc = "gbl_g" + to_string(i);
-		// i++;
+		for (auto gbl : globals)
+		{
+			gbl.second->setMemoryLoc("gbl_" + gbl.second->getName());
+		}
 	}
 
 	void IRProgram::datagenX64(std::ostream &out)
 	{
-		TODO(Write out data section)
-		// call allocGlobals()
-
-		/**
-		* Write out data section with all .ascci and .quad
-		* Do quad first then .asci
-		* */
-
-		// Put this directive after you write out strings
-		// so that everything is aligned to a quadword value
-		// again
-
-		out << ".data";
-		out << ".str_text:";
 		for (auto cur : strings)
 		{
+			out << "str_text:";
 			out << "\t.asciz \"" + cur.second + "\";\n";
 		}
-		out << ".align 8\n";
 	}
 
 	void IRProgram::toX64(std::ostream &out)
 	{
+		out << ".data\n";
+
 		allocGlobals();
+		int i = 0;
+		for (auto gbl : globals)
+		{
+			out << gbl.second->myLoc << ": "
+				<< ".quad " << i << "\n";
+			i++;
+		}
+		out << ".text\n";
 		for (auto proc : getProcs())
 		{
 			proc->toX64(out);
@@ -48,7 +43,19 @@ namespace holeyc
 
 	void Procedure::allocLocals()
 	{
-		TODO(Implement me)
+		int start = -24;
+		for(auto gbl : locals){
+			gbl.second->setMemoryLoc(to_string(start));
+			start = start - 8;
+		}
+		for(auto temp : temps){
+			temp->setMemoryLoc(to_string(start));
+			start = start - 8;
+		}
+		for(auto formal : formals){
+			formal->setMemoryLoc(to_string(start));
+			start = start - 8;
+		}
 	}
 
 	void Procedure::toX64(std::ostream &out)
@@ -131,7 +138,10 @@ namespace holeyc
 
 	void JmpIfQuad::codegenX64(std::ostream &out)
 	{
-		TODO(Implement me)
+		cnd->genLoad(out, "%rax");
+		std::cout << cnd->locString();
+		out << "cmpq $0, %rax\n";
+		out << "je lbl_" << tgt->getName() << "\n";
 	}
 
 	void NopQuad::codegenX64(std::ostream &out)
@@ -162,25 +172,42 @@ namespace holeyc
 			}
 			break;
 		case INPUT:
-			TODO("IMPLEMENT ME");
+			myArg->genStore(out, "%rax");
+			if (myArg->getWidth() == QUADWORD)
+			{
+				out << "callq writeInt\n";
+			}
+			else if (myArg->getWidth() == BYTE)
+			{
+				out << "callq writeByte\n";
+			}
+			else
+			{
+				// If the argument is an ADDR,
+				// assume it's a string
+				out << "callq writeString";
+			}
+			break;
 		}
 	}
 
 	void CallQuad::codegenX64(std::ostream &out)
 	{
-		TODO(Implement me)
+		out << "call " << callee->getName() << "\n";
 	}
 
 	void EnterQuad::codegenX64(std::ostream &out)
 	{
+		out << "pushq %rbp" << "\n";		
+		out << "movq %rsp, %rbp" << "\n";		
+		out << "addq %16, %rbp" << "\n";		
+		out << "subq $" << myProc->localsSize() << ", %rsp" << "\n";		
 		out << "Enter " << myProc->getName() << "\n";
-		// myProc->toX64(out);
 	}
 
 	void LeaveQuad::codegenX64(std::ostream &out)
 	{
 		out << "Leave " << myProc->getName() << "\n";
-		// myProc->toX64(out);
 	}
 
 	void SetArgQuad::codegenX64(std::ostream &out)
@@ -223,12 +250,12 @@ namespace holeyc
 
 	void SetRetQuad::codegenX64(std::ostream &out)
 	{
-		opd->genLoad(out,"%rax");
+		opd->genLoad(out, "%rax");
 	}
 
 	void GetRetQuad::codegenX64(std::ostream &out)
 	{
-		opd->genStore(out,"%rax");
+		opd->genStore(out, "%rax");
 	}
 
 	void SymOpd::genLoad(std::ostream &out, std::string regStr)
@@ -238,7 +265,7 @@ namespace holeyc
 
 	void SymOpd::genStore(std::ostream &out, std::string regStr)
 	{
-		out << "movq" << regStr << ", " << myLoc << "\n";
+		out << "movq " << regStr << ", " << myLoc << "(%rbp)\n";
 	}
 
 	void AuxOpd::genLoad(std::ostream &out, std::string regStr)
@@ -253,7 +280,26 @@ namespace holeyc
 
 	void LitOpd::genLoad(std::ostream &out, std::string regStr)
 	{
-		out << "movq $" << val << ", " << regStr << "\n";
+		std::string output = "";
+		if (this->getWidth() == BYTE)
+		{
+			if (this->valString() != "true" && this->valString() != "false")
+			{
+				char temp = val[1];
+				int ascii = int(temp);
+				output = to_string(ascii);
+				out << "LitASCII " << valString();
+				out << "movq $" << output << ", " << regStr << "\n";
+			}
+			else
+			{
+				out << "movq $" << val << ", " << regStr << "\n";
+			}
+		}
+		else
+		{
+			out << "movq $" << val << ". " << regStr << "\n";
+		}
 	}
 
 	void LitOpd::genStore(std::ostream &out, std::string regStr)

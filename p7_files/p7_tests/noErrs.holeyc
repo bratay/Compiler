@@ -1,10 +1,18 @@
-int fn(){
-	int a;
-	a = 4;
-	TOCONSOLE a;
+int b;
+
+int bae(char y){
+	
 }
 
 int main(){
-	fn();
+	b = 20;
+	char j;
+	j = 'a;
+	char n;
+	n = j;
+	if(n == j){
+		b = 666;
+	}
+	bae(n);
 	return 0;
 }
