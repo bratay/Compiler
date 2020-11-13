@@ -7,10 +7,8 @@ namespace holeyc
 
 	void IRProgram::allocGlobals()
 	{
-		for (auto gbl : globals)
-		{
-			gbl.second->setMemoryLoc("gbl_" + gbl.second->getName());
-		}
+		for (auto g : globals)
+			g.second->setMemoryLoc("gbl_" + g.second->getName());
 	}
 
 	void IRProgram::datagenX64(std::ostream &out)
@@ -27,49 +25,53 @@ namespace holeyc
 		out << ".data\n";
 
 		allocGlobals();
-		int i = 0;
+		int x = 0;
 		for (auto gbl : globals)
 		{
 			out << gbl.second->myLoc << ": "
-				<< ".quad " << i << "\n";
-			i++;
+				<< ".quad " << x << "\n";
+			x++;
 		}
 		out << ".text\n";
 		for (auto proc : getProcs())
-		{
 			proc->toX64(out);
-		}
 	}
 
 	void Procedure::allocLocals()
 	{
-		int start = -24;
-		for(auto gbl : locals){
-			gbl.second->setMemoryLoc(to_string(start));
-			start = start - 8;
+		int s = -24;
+		for (auto gbl : locals)
+		{
+			gbl.second->setMemoryLoc(to_string(s));
+			s = s - 8;
 		}
-		for(auto temp : temps){
-			temp->setMemoryLoc(to_string(start));
-			start = start - 8;
+
+		for (auto temp : temps)
+		{
+			temp->setMemoryLoc(to_string(s));
+			s = s - 8;
 		}
-		for(auto formal : formals){
-			formal->setMemoryLoc(to_string(start));
-			start = start - 8;
+
+		for (auto form : formals)
+		{
+			form->setMemoryLoc(to_string(s));
+			s = s - 8;
 		}
 	}
 
 	void Procedure::toX64(std::ostream &out)
 	{
-		//Allocate all locals
 		allocLocals();
 
 		enter->codegenLabels(out);
 		enter->codegenX64(out);
+		
 		for (auto quad : *bodyQuads)
 		{
 			quad->codegenLabels(out);
 			quad->codegenX64(out);
 		}
+
 		leave->codegenLabels(out);
 		leave->codegenX64(out);
 	}
@@ -77,19 +79,17 @@ namespace holeyc
 	void Quad::codegenLabels(std::ostream &out)
 	{
 		if (labels.empty())
-		{
 			return;
-		}
 
 		size_t numLabels = labels.size();
 		size_t labelIdx = 0;
-		for (Label *label : labels)
+
+		for (Label *lab : labels)
 		{
-			out << label->toString() << ": ";
+			out << lab->toString() << ": ";
 			if (labelIdx != numLabels - 1)
-			{
 				out << "\n";
-			}
+
 			labelIdx++;
 		}
 	}
@@ -128,6 +128,7 @@ namespace holeyc
 	{
 		cnd->genLoad(out, "%rax");
 		std::cout << cnd->locString();
+
 		out << "cmpq $0, %rax\n";
 		out << "je lbl_" << tgt->getName() << "\n";
 	}
@@ -145,34 +146,20 @@ namespace holeyc
 		case OUTPUT:
 			myArg->genLoad(out, "%rdi");
 			if (myArg->getWidth() == QUADWORD)
-			{
 				out << "callq printInt\n";
-			}
 			else if (myArg->getWidth() == BYTE)
-			{
 				out << "callq printByte\n";
-			}
 			else
-			{
-				// If the argument is an ADDR,
-				// assume it's a string
 				out << "callq printString";
-			}
 			break;
 		case INPUT:
 			myArg->genStore(out, "%rax");
 			if (myArg->getWidth() == QUADWORD)
-			{
 				out << "callq writeInt\n";
-			}
 			else if (myArg->getWidth() == BYTE)
-			{
 				out << "callq writeByte\n";
-			}
 			else
-			{
 				out << "callq writeString";
-			}
 			break;
 		}
 	}
@@ -184,45 +171,40 @@ namespace holeyc
 
 	void EnterQuad::codegenX64(std::ostream &out)
 	{
-		out << "pushq %rbp" << "\n";		
-		out << "movq %rsp, %rbp" << "\n";		
-		out << "addq %16, %rbp" << "\n";		
-		out << "subq $" << myProc->localsSize() << ", %rsp" << "\n";		
+		out << "pushq %rbp"
+			<< "\n";
+		out << "movq %rsp, %rbp"
+			<< "\n";
+		out << "addq %16, %rbp"
+			<< "\n";
+		out << "subq $" << myProc->localsSize() << ", %rsp"
+			<< "\n";
 	}
 
 	void LeaveQuad::codegenX64(std::ostream &out)
 	{
-		out << "addq $" << myProc->localsSize() << ", %rsp" << "\n";		
-		out << "popq %rbp" << "\n";
-		out << "retq" << "\n";
+		out << "addq $" << myProc->localsSize() << ", %rsp"
+			<< "\n";
+		out << "popq %rbp"
+			<< "\n";
+		out << "retq"
+			<< "\n";
 	}
 
 	void SetArgQuad::codegenX64(std::ostream &out)
-	{ 
+	{
 		if (index == 1)
-		{
 			opd->genLoad(out, "%rdi");
-		}
 		else if (index == 2)
-		{
 			opd->genLoad(out, "%rax");
-		}
 		else if (index == 3)
-		{
 			opd->genLoad(out, "%rdx");
-		}
 		else if (index == 4)
-		{
 			opd->genLoad(out, "%rcx");
-		}
 		else if (index == 5)
-		{
 			opd->genLoad(out, "%r8");
-		}
 		else if (index == 6)
-		{
 			opd->genLoad(out, "%r9");
-		}
 		else
 		{
 			opd->genLoad(out, "%rax");
@@ -232,7 +214,7 @@ namespace holeyc
 
 	void GetArgQuad::codegenX64(std::ostream &out)
 	{
-		// nothing needed here
+		//NA 
 	}
 
 	void SetRetQuad::codegenX64(std::ostream &out)
@@ -248,10 +230,12 @@ namespace holeyc
 	void SymOpd::genLoad(std::ostream &out, std::string regStr)
 	{
 		std::string output = "";
-		if(this->getWidth() == BYTE){
-			if(this->locString() != "true" && this->locString() != "false"){
-				char temp = this->valString()[1];
-				int ascii = int(temp);
+		if (this->getWidth() == BYTE)
+		{
+			if (this->locString() != "true" && this->locString() != "false")
+			{
+				char var = this->valString()[1];
+				int ascii = int(var);
 				output = to_string(ascii);
 			}
 		}
@@ -268,24 +252,21 @@ namespace holeyc
 	void AuxOpd::genLoad(std::ostream &out, std::string regStr)
 	{
 		std::string output = "";
+
 		if (this->getWidth() == BYTE)
 		{
 			if (this->valString() != "true" && this->valString() != "false")
 			{
-				char temp = valString()[1];
-				int ascii = int(temp);
+				char var = valString()[1];
+				int ascii = int(var);
 				output = to_string(ascii);
 				out << "movq $" << output << ", " << regStr << "\n";
 			}
 			else
-			{
 				out << "movq $" << myLoc << "(%rbp), " << regStr << "\n";
-			}
 		}
 		else
-		{
 			out << "movq $" << myLoc << "(%rbp). " << regStr << "\n";
-		}
 	}
 
 	void AuxOpd::genStore(std::ostream &out, std::string regStr)
@@ -307,14 +288,10 @@ namespace holeyc
 				out << "movq $" << output << ", " << regStr << "\n";
 			}
 			else
-			{
 				out << "movq $" << val << ", " << regStr << "\n";
-			}
 		}
 		else
-		{
 			out << "movq $" << val << ". " << regStr << "\n";
-		}
 	}
 
 	void LitOpd::genStore(std::ostream &out, std::string regStr)
