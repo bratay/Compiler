@@ -1,0 +1,10 @@
+[BEGIN GLOBALS]
+[END GLOBALS]
+[BEGIN main LOCALS]
+c (local)
+[END main LOCALS]
+main:       enter main
+            loc0 := c@7
+            [loc0] := 97
+lbl_0:      leave main
+

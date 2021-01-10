@@ -1,0 +1,3 @@
+Optimization:
+- need to be able to coalesce blocks
+- should do a removeNops operation
